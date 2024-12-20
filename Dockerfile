@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
 RUN echo 'deb http://download.proxmox.com/debian/pdm bookworm pdm-test' > /etc/apt/sources.list.d/pdm-test.list && \
     wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg && \
     apt-get update && \
+    echo "proxmox-datacenter-manager shared/proxmox-datacenter-manager/conffile/reconfigure select keep-current" | debconf-set-selections && \
     apt-get install -y \
     proxmox-datacenter-manager proxmox-datacenter-manager-ui && \
     apt-get clean && \
