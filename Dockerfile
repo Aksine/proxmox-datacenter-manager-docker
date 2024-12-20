@@ -5,7 +5,7 @@ FROM debian:bookworm
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
 
-# Install core dependencies and set debconf to noninteractive
+# Install core dependencies and ensure noninteractive debconf
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 # Configure dpkg to handle configuration files non-interactively
 RUN echo 'DPkg::options { "--force-confdef"; "--force-confold"; };' > /etc/apt/apt.conf.d/99force-conf
 
-# Add PDM repository, import GPG key, and install PDM
+# Add PDM repository, import GPG key, and install PDM non-interactively
 RUN echo 'deb http://download.proxmox.com/debian/pdm bookworm pdm-test' > /etc/apt/sources.list.d/pdm-test.list && \
     wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg && \
     apt-get update && \
