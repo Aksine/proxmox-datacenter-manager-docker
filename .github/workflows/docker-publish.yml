@@ -1,0 +1,29 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on push to the main branch
+  workflow_dispatch: # Allow manual runs
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # Step 2: Log in to GHCR
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # Step 3: Build the Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/pdm:latest .
+
+      # Step 4: Push the image to GHCR
+      - name: Push Docker image to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository }}/pdm:latest
