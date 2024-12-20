@@ -15,13 +15,13 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     apt-get clean
 
-# Add PDM repository and install PDM
 RUN echo 'deb http://download.proxmox.com/debian/pdm bookworm pdm-test' > /etc/apt/sources.list.d/pdm-test.list && \
     wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg && \
     apt-get update && \
-    DEBIAN_FRONTEND=noninteractive APT_OPTS="-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold" \
-    apt-get install -y proxmox-datacenter-manager proxmox-datacenter-manager-ui && \
-    apt-get clean
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    proxmox-datacenter-manager proxmox-datacenter-manager-ui && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
     
 # Expose the PDM port
 EXPOSE 8443
