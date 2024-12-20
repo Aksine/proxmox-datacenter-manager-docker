@@ -19,9 +19,10 @@ RUN apt-get update && apt-get install -y \
 RUN echo 'deb http://download.proxmox.com/debian/pdm bookworm pdm-test' > /etc/apt/sources.list.d/pdm-test.list && \
     wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg && \
     apt-get update && \
-    apt-get install -y $APT_OPTS proxmox-datacenter-manager proxmox-datacenter-manager-ui && \
+    DEBIAN_FRONTEND=noninteractive APT_OPTS="-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold" \
+    apt-get install -y proxmox-datacenter-manager proxmox-datacenter-manager-ui && \
     apt-get clean
-
+    
 # Expose the PDM port
 EXPOSE 8443
 
