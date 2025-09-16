@@ -23,15 +23,8 @@ RUN wget http://download.proxmox.com/debian/pbs-client/dists/trixie/main/binary-
     dpkg -i proxmox-archive-keyring_4.0_all.deb && \
     rm proxmox-archive-keyring_4.0_all.deb
 
-# Add the PDM beta repository using new deb822 format
-RUN cat > /etc/apt/sources.list.d/pdm-test.sources << EOF
-Types: deb
-URIs: http://download.proxmox.com/debian/pdm/
-Suites: trixie
-Components: pdm-test
-Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
-EOF
-
+# Add the PDM beta repository 
+COPY pdm-test.sources /etc/apt/sources.list.d/pdm-test.sources
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
