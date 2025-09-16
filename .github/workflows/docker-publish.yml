@@ -27,3 +27,4 @@ jobs:
       - name: Push Docker image to GHCR
         run: |
           REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker push -t ghcr.io/${REPO_NAME}/pdm:latest 
