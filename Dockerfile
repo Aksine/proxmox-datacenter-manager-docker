@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     iproute2 \
     debconf-utils \
+    rsyslog \
+    openssl \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -35,9 +37,19 @@ EXPOSE 8443
 # Create volume for persistent data
 VOLUME /var/lib/pdm
 
-# Create necessary directories and set permissions
-RUN mkdir -p /var/lib/pdm /var/log/pdm /run/proxmox-datacenter-manager && \
-    chown -R root:root /var/lib/pdm /var/log/pdm /run/proxmox-datacenter-manager
+# Create necessary users and directories with proper permissions
+RUN groupadd -g 33 www-data || true && \
+    useradd -u 33 -g 33 -r -s /usr/sbin/nologin www-data || true && \
+    mkdir -p /var/lib/pdm /var/log/pdm /run/proxmox-datacenter-manager /etc/proxmox-datacenter-manager/auth && \
+    chown -R www-data:www-data /var/lib/pdm /var/log/pdm /etc/proxmox-datacenter-manager && \
+    chown -R root:www-data /run/proxmox-datacenter-manager && \
+    chmod 1770 /run/proxmox-datacenter-manager
+
+# Configure rsyslog for container use - simpler approach
+RUN echo '*.* /dev/stdout' > /etc/rsyslog.d/50-container.conf && \
+    echo '$ModLoad imuxsock' >> /etc/rsyslog.d/50-container.conf && \
+    sed -i '/imklog/d' /etc/rsyslog.conf && \
+    sed -i '/imuxsock/d' /etc/rsyslog.conf
 
 # Copy the advanced startup script
 COPY start-pdm.sh /start-pdm.sh
